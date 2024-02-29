@@ -1,17 +1,18 @@
-import {React, useState} from 'react';
+import {React, useState, useEffect} from 'react';
 // import PRODUCTS from '../stores/PRODUCT';
 // import Products from '../components/Products';
 
 function UpdateForm({product, setList, list}) {
-    const[updateProduct, setUpdateProduct] = useState(product);
+    // const[updateProduct, setUpdateProduct] = useState(product);
+    const[formState, setFormState] = useState(product);
+
+    useEffect(() => {
+        setFormState(product);
+    }, [product]);
+
     function update(event){
         event.preventDefault();
-        // for(let i = 0; i < list.length; i++){
-        //     console.log(list[i]);
-        //     if(list[i].id === updateProduct.id){
-        //         list[i] = updateProduct;
-        //     }
-        // }
+        const updateProduct = {...formState};
         const newList = list.map(item => {
             if(item.id === updateProduct.id){
                 return updateProduct;
@@ -20,11 +21,17 @@ function UpdateForm({product, setList, list}) {
             }
         });
         setList(newList);
-    }
-    function hideForm(){
         alert('Successfully updated product');
-        // setShowForm(false);
     }
+
+    function handleInputChange(event){
+        const{name, value} = event.target;
+        setFormState(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    }
+
     return(
         <div>
         {
@@ -34,23 +41,23 @@ function UpdateForm({product, setList, list}) {
                     <form action="#" method="POST">
                     <div>
                         <label for="name">Name:</label>
-                        <input type="text" id="name" name="name" onChange={(event)=> setUpdateProduct({...updateProduct, "name": event.target.value})} required/>
+                        <input type="text" id="name" name="name" value={formState.name} onChange={handleInputChange} required/>
                     </div>
                     <div>
                         <label for="quantity">Quantity:</label>
-                        <input type="number" id="quantity" name="quantity" onChange={(event)=> setUpdateProduct({...updateProduct, "quantity": event.target.value})} required/>
+                        <input type="number" id="quantity" name="quantity" value={formState.quantity} onChange={handleInputChange} required/>
                     </div>
                     
                     <div>
                         <label for="price">Price:</label>
-                        <input type="number" id="price" name="price" onChange={(event)=> setUpdateProduct({...updateProduct, "price": event.target.value})} required/>
+                        <input type="number" id="price" name="price" value={formState.price} onChange={handleInputChange} required/>
                     </div>
                     <div>
                         <label for="createDate">Create Date:</label>
-                        <input type="date" id="createDate" name="createDate" onChange={(event)=> setUpdateProduct({...updateProduct, "createDate": event.target.value})} required/>
+                        <input type="date" id="createDate" name="createDate" value={formState.createDate} onChange={handleInputChange} required/>
                     </div>
                     <div>
-                        <input type="submit" value="Update" onClick={(event) => {update(event); hideForm();}}/>
+                        <input type="submit" value="Update" onClick={(event) => {update(event)}}/>
                         <button type="button">Close</button>
                     </div>
                     
@@ -58,12 +65,6 @@ function UpdateForm({product, setList, list}) {
                 </div>
                         )
                     }
-        {/* <script>
-        function closeForm() {
-        document.getElementById("updateForm").reset(); // Reset form fields
-        document.getElementById("updateForm").style.display = "none"; // Hide form
-        }
-        </script> */}
         </div>
     )
 }
